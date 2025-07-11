@@ -1,6 +1,7 @@
 package com.future.random.id.picker;
 
 
+import com.future.common.exception.BusinessException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -12,10 +13,12 @@ public class RandomIdPickerConfiguration {
     RandomIdPickerProperties randomIdPickerProperties;
 
     @Bean(initMethod = "start", destroyMethod = "close")
-    public RandomIdPickerService randomIdPickerService() {
+    public RandomIdPickerService randomIdPickerService() throws BusinessException {
         return new RandomIdPickerService(
                 randomIdPickerProperties.getHost(),
                 randomIdPickerProperties.getPort(),
-                randomIdPickerProperties.getCacheSize());
+                randomIdPickerProperties.getCacheSize(),
+                randomIdPickerProperties.getFlagList()
+        );
     }
 }

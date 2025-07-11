@@ -2,8 +2,10 @@ package com.future.random.id.picker;
 
 import com.future.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -24,7 +26,6 @@ public class ApplicationTests {
     @Test
     public void contextLoads() throws BusinessException, InterruptedException {
         String flag = "order";
-        randomIdPickerService.register(flag);
         List<Long> idList = new ArrayList<>();
         for (long i = 0; i < 1024; i++)
             idList.add(1001 + i);
@@ -34,5 +35,6 @@ public class ApplicationTests {
         TimeUnit.SECONDS.sleep(6);
         idList = randomIdPickerService.listIdRandomly(flag, 10);
         log.debug("成功从本地缓存中随机获取 id 列表 idList {}", idList);
+        Assertions.assertEquals(10, idList.size());
     }
 }
