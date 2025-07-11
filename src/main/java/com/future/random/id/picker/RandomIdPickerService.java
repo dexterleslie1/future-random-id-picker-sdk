@@ -171,7 +171,7 @@ public class RandomIdPickerService {
 
     public List<Long> listIdRandomly(String flag, int size) throws BusinessException {
         if (!flagToIdListMap.containsKey(flag)) {
-            throw new BusinessException("不存在 flag=" + flag + " 的 id 缓存标识，请先调用 register 方法注册");
+            throw new BusinessException("不存在 flag=" + flag + " 的 id 缓存标识，请先在应用中使用 spring.future.random.id.picker.flag-list=" + flag + " 配置再使用");
         }
 
         List<Long> idList = flagToIdListMap.get(flag);
@@ -179,10 +179,13 @@ public class RandomIdPickerService {
             throw new BusinessException("flag=" + flag + " 的 id 缓存暂时没有 id 列表，请稍后再试");
         }
 
-        int start = RandomUtil.randomInt(0, idList.size());
-        int end = start + size;
-        if (end > idList.size() - 1)
-            end = idList.size() - 1;
-        return idList.subList(start, end);
+        List<Long> randomIdList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            int randomInt = RandomUtil.randomInt(0, idList.size());
+            Long randomId = idList.get(randomInt);
+            if (!randomIdList.contains(randomId))
+                randomIdList.add(randomId);
+        }
+        return randomIdList;
     }
 }
