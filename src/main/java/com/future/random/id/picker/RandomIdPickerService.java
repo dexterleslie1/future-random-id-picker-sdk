@@ -131,7 +131,7 @@ public class RandomIdPickerService {
                     if (idList != null && !idList.isEmpty()) {
                         flagToIdListMap.put(flag, idList);
                         if (log.isDebugEnabled())
-                            log.debug("flag {} 成功从随机 id 选择器服务随机获取 id 列表并更新到本地缓存 idList {}", flag, idList);
+                            log.debug("flag {} 成功从随机 id 选择器服务随机获取 id 列表并更新到本地缓存 id 列表 id 个数为 {}", flag, idList.size());
                     } else {
                         if (log.isDebugEnabled())
                             log.debug("flag {} 尝试从随机 id 选择器服务获取随机 id 列表但是返回的随机 id 列表为空", flag);
