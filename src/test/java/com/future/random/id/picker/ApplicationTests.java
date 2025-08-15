@@ -26,9 +26,9 @@ public class ApplicationTests {
     @Test
     public void contextLoads() throws BusinessException, InterruptedException {
         String flag = "order";
-        List<Long> idList = new ArrayList<>();
+        List<String> idList = new ArrayList<>();
         for (long i = 0; i < 1024; i++)
-            idList.add(1001 + i);
+            idList.add(String.valueOf(1001 + i));
         randomIdPickerService.addIdList(flag, idList);
 
         // 等待后台线程获取 id 列表到缓存

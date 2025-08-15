@@ -19,9 +19,9 @@ public interface Api {
     @RequestLine("POST /api/v1/id/picker/addIdList")
     @Headers(value = {"Content-Type: application/x-www-form-urlencoded"})
     ObjectResponse<String> addIdList(@Param("flag") String flag,
-                                     @Param("idList") List<Long> idList) throws BusinessException;
+                                     @Param("idList") List<String> idList) throws BusinessException;
 
     @RequestLine("GET /api/v1/id/picker/listIdRandomly?flag={flag}&size={size}")
-    ListResponse<Long> listIdRandomly(@Param("flag") String flag,
+    ListResponse<String> listIdRandomly(@Param("flag") String flag,
                                       @Param("size") int size) throws BusinessException;
 }

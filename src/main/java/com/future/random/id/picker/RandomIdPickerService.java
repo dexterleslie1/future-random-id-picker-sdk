@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class RandomIdPickerService {
 
     private ScheduledExecutorService executorService;
-    private Map<String, List<Long>> flagToIdListMap;
+    private Map<String, List<String>> flagToIdListMap;
     private int cacheSize;
     private Api api;
 
@@ -126,8 +126,8 @@ public class RandomIdPickerService {
         executorService.scheduleAtFixedRate(() -> {
             for (String flag : flagToIdListMap.keySet()) {
                 try {
-                    ListResponse<Long> response = api.listIdRandomly(flag, this.cacheSize);
-                    List<Long> idList = response.getData();
+                    ListResponse<String> response = api.listIdRandomly(flag, this.cacheSize);
+                    List<String> idList = response.getData();
                     if (idList != null && !idList.isEmpty()) {
                         flagToIdListMap.put(flag, idList);
                         if (log.isDebugEnabled())
@@ -165,24 +165,24 @@ public class RandomIdPickerService {
             log.debug("成功关闭服务");
     }
 
-    public void addIdList(String flag, List<Long> idList) throws BusinessException {
+    public void addIdList(String flag, List<String> idList) throws BusinessException {
         api.addIdList(flag, idList);
     }
 
-    public List<Long> listIdRandomly(String flag, int size) throws BusinessException {
+    public List<String> listIdRandomly(String flag, int size) throws BusinessException {
         if (!flagToIdListMap.containsKey(flag)) {
             throw new BusinessException("不存在 flag=" + flag + " 的 id 缓存标识，请先在应用中使用 spring.future.random.id.picker.flag-list=" + flag + " 配置再使用");
         }
 
-        List<Long> idList = flagToIdListMap.get(flag);
+        List<String> idList = flagToIdListMap.get(flag);
         if (idList == null || idList.isEmpty()) {
             throw new BusinessException("flag=" + flag + " 的 id 缓存暂时没有 id 列表，请稍后再试");
         }
 
-        List<Long> randomIdList = new ArrayList<>();
+        List<String> randomIdList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             int randomInt = RandomUtil.randomInt(0, idList.size());
-            Long randomId = idList.get(randomInt);
+            String randomId = idList.get(randomInt);
             if (!randomIdList.contains(randomId))
                 randomIdList.add(randomId);
         }
