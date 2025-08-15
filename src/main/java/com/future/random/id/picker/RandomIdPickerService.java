@@ -188,4 +188,16 @@ public class RandomIdPickerService {
         }
         return randomIdList;
     }
+
+    /**
+     * 随机获取一个id
+     *
+     * @param flag
+     * @return
+     * @throws BusinessException
+     */
+    public String getIdRandomly(String flag) throws BusinessException {
+        List<String> idList = listIdRandomly(flag, 1);
+        return idList.get(0);
+    }
 }
