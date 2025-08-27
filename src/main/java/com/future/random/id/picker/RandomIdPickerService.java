@@ -13,6 +13,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -122,23 +123,28 @@ public class RandomIdPickerService {
             return;
         }
 
-        executorService = Executors.newScheduledThreadPool(1);
+        executorService = Executors.newSingleThreadScheduledExecutor(new CustomizableThreadFactory("random-id-picker-fixed-rate-picker-"));
         executorService.scheduleAtFixedRate(() -> {
-            for (String flag : flagToIdListMap.keySet()) {
-                try {
-                    ListResponse<String> response = api.listIdRandomly(flag, this.cacheSize);
-                    List<String> idList = response.getData();
-                    if (idList != null && !idList.isEmpty()) {
-                        flagToIdListMap.put(flag, idList);
-                        if (log.isDebugEnabled())
-                            log.debug("flag {} 成功从随机 id 选择器服务随机获取 id 列表并更新到本地缓存 id 列表 id 个数为 {}", flag, idList.size());
-                    } else {
-                        if (log.isDebugEnabled())
-                            log.debug("flag {} 尝试从随机 id 选择器服务获取随机 id 列表但是返回的随机 id 列表为空", flag);
+            try {
+                for (String flag : flagToIdListMap.keySet()) {
+                    try {
+                        ListResponse<String> response = api.listIdRandomly(flag, this.cacheSize);
+                        List<String> idList = response.getData();
+                        if (idList != null && !idList.isEmpty()) {
+                            flagToIdListMap.put(flag, idList);
+                            if (log.isDebugEnabled())
+                                log.debug("flag {} 成功从随机 id 选择器服务随机获取 id 列表并更新到本地缓存 id 列表 id 个数为 {}", flag, idList.size());
+                        } else {
+                            if (log.isDebugEnabled())
+                                log.debug("flag {} 尝试从随机 id 选择器服务获取随机 id 列表但是返回的随机 id 列表为空", flag);
+                        }
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage(), ex);
                     }
-                } catch (Exception ex) {
-                    log.error(ex.getMessage(), ex);
                 }
+            } catch (Exception ex) {
+                // 不能抛出异常，否则 ScheduledExecutorService 停止工作
+                log.error(ex.getMessage(), ex);
             }
         }, 5, 5, TimeUnit.SECONDS);
 
